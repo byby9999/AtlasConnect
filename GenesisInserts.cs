@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace AtlasConnect
 {
-    public class GenesisBusinessInserts
+    public class GenesisInserts
     {
         public static void AddBodySide(MongoClient client)
         {

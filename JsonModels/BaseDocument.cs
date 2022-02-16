@@ -35,7 +35,7 @@ namespace AtlasConnect.JsonModels
             this.CreatedOn = createdOnDate;
             this.LastUpdatedOn = lastUpdatedOnDate;
 
-            _partition = Configurations.PartitionDefault;
+            _partition = Configurations.DefaultPartition;
         }
     }
 }

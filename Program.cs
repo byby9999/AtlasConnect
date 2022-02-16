@@ -13,33 +13,36 @@ namespace AtlasConnect
 
             //Do what entity you want:
             /*GenesisBusiness.AddItemBarcodes(client);
-            GenesisBusinessInserts.AddLocations(client);
-            GenesisBusinessInserts.AddLocationItems(client);
-            GenesisBusinessInserts.AddLocationUsers(client);
-            GenesisBusinessInserts.AddOrganisationSiteUsers(client);
-            GenesisBusinessInserts.AddPatients(client);
-            GenesisBusinessInserts.AddPreferenceCards(client);
-            GenesisBusinessInserts.AddPreferenceCardItems(client);
-            GenesisBusinessInserts.AddPreferenceCardProcedures(client);
-            GenesisBusinessInserts.AddPreferenceCardProcedurePacks(client);
-            GenesisBusinessInserts.AddPreferenceCardSites(client);
-            GenesisBusinessInserts.AddPreferenceCardSurgeons(client);
-            GenesisBusinessInserts.AddProcedures(client);
-            GenesisBusinessInserts.AddProcedureItems(client);
-            GenesisBusinessInserts.AddProcedurePacks(client);
-            GenesisBusinessInserts.AddProcedureSurgeons(client);
-            GenesisBusinessInserts.AddRolePermissions(client);
-            GenesisBusinessInserts.AddSuppliers(client);
-            GenesisBusinessInserts.AddSupplierItems(client);
-            GenesisBusinessInserts.AddSurgeons(client);
-            GenesisBusinessInserts.AddSurgeryItemStatusReasons(client);
-            GenesisBusinessInserts.AddSurgerySchedules(client);
-            GenesisBusinessInserts.AddSurgeryScheduleSecondaryProcedures(client);
-            GenesisBusinessInserts.AddTheatres(client);
-            GenesisBusinessInserts.AddTheatreStaffs(client);
-            GenesisBusinessInserts.AddSurgeries(client);
-            GenesisBusinessInserts.AddSurgeryItems(client);
+            GenesisInserts.AddLocations(client);
+            GenesisInserts.AddLocationItems(client);
+            GenesisInserts.AddLocationUsers(client);
+            GenesisInserts.AddOrganisationSiteUsers(client);
+            GenesisInserts.AddPatients(client);
+            GenesisInserts.AddPreferenceCards(client);
+            GenesisInserts.AddPreferenceCardItems(client);
+            GenesisInserts.AddPreferenceCardProcedures(client);
+            GenesisInserts.AddPreferenceCardProcedurePacks(client);
+            GenesisInserts.AddPreferenceCardSites(client);
+            GenesisInserts.AddPreferenceCardSurgeons(client);
+            GenesisInserts.AddProcedures(client);
+            GenesisInserts.AddProcedureItems(client);
+            GenesisInserts.AddProcedurePacks(client);
+            GenesisInserts.AddProcedureSurgeons(client);
+            GenesisInserts.AddRolePermissions(client);
+            GenesisInserts.AddSuppliers(client);
+            GenesisInserts.AddSupplierItems(client);
+            GenesisInserts.AddSurgeons(client);
+            GenesisInserts.AddSurgeryItemStatusReasons(client);
+            GenesisInserts.AddSurgerySchedules(client);
+            GenesisInserts.AddSurgeryScheduleSecondaryProcedures(client);
+            GenesisInserts.AddTheatres(client);
+            GenesisInserts.AddTheatreStaffs(client);
+            GenesisInserts.AddSurgeries(client);
+            GenesisInserts.AddSurgeryItems(client);
             */
+
+            //GenesisUpdates.UpdateSurgeries(client, false);
+
         }
     }
 }

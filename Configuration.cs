@@ -10,7 +10,7 @@ namespace AtlasConnect
     {
         public const string MongoCluster_Chester_GenesisTest_AWS = ""; //do not commit value
 
-        public const string PartitionDefault = "61c058e5559668e69ad62a8d";
+        public const string DefaultPartition = "61c058e5559668e69ad62a8d";
 
         public const string DefaultDatabase = "mydb";
 
