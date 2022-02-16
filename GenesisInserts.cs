@@ -12,214 +12,375 @@ using System.Threading.Tasks;
 
 namespace AtlasConnect
 {
-    public class GenesisInserts
+    public static class GenesisInserts
     {
-        public static void AddBodySide(MongoClient client)
+        public static void AddBodySide(this MongoClient client, bool batchMode)
         {
+            string objectName = "BodySide";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var bodySideCollection = db.GetCollection<BsonDocument>("BodySide");
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
-            string bodySideJson = File.ReadAllText(Paths.BodySide);
+            string json = File.ReadAllText(Paths.BodySide);
 
-            var bodySideModels = JsonConvert.DeserializeObject<List<BodySide>>(bodySideJson).ToList();
+            var models = JsonConvert.DeserializeObject<List<BodySide>>(json).ToList();
 
-            var bodySideDocuments = new List<BsonDocument>();
+            var documents = new List<BsonDocument>();
 
-            foreach (var bodySide in bodySideModels)
+                foreach (var model in models)
+                {
+                    var doc = model.ToDocument();
+                    documents.Add(doc);
+                }
+
+            if (batchMode)
             {
-                var doc = bodySide.ToDocument();
-                bodySideDocuments.Add(doc);
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
+
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
-
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            bodySideCollection.InsertMany(bodySideDocuments);
-            s.Stop();
-
-            Console.WriteLine($"Inserted {bodySideDocuments.Count} BodySide entities");
-        }
-
-        public static void AddBodySites(MongoClient client)
-        {
-            var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var bodySiteCollection = db.GetCollection<BsonDocument>("BodySite");
-
-            string bodySiteJson = File.ReadAllText(Paths.BodySite);
-
-            var bodySiteModels = JsonConvert.DeserializeObject<List<BodySite>>(bodySiteJson).ToList();
-
-            var bodySiteDocuments = new List<BsonDocument>();
-
-            foreach (var bodySite in bodySiteModels)
+            else 
             {
-                var doc = bodySite.ToDocument();
-                bodySiteDocuments.Add(doc);
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents) 
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
             }
-
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            bodySiteCollection.InsertMany(bodySiteDocuments);
-            s.Stop();
-
-            Console.WriteLine($"Inserted {bodySiteDocuments.Count} BodySite entities");
+            
         }
 
-        public static void AddItems(MongoClient client)
+        public static void AddBodySites(this MongoClient client, bool batchMode)
         {
+            string objectName = "BodySite";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var itemCollection = db.GetCollection<BsonDocument>("Item");
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
-            string itemJson = File.ReadAllText(Paths.Item);
+            string json = File.ReadAllText(Paths.BodySite);
 
-            var itemModels = JsonConvert.DeserializeObject<List<Item>>(itemJson).ToList();
+            var models = JsonConvert.DeserializeObject<List<BodySite>>(json).ToList();
 
-            var itemDocuments = new List<BsonDocument>();
+            var documents = new List<BsonDocument>();
 
-            foreach (var item in itemModels)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
-                itemDocuments.Add(doc);
+                var doc = model.ToDocument();
+                documents.Add(doc);
             }
-
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            itemCollection.InsertMany(itemDocuments);
-            s.Stop();
-
-            Console.WriteLine($"Inserted {itemDocuments.Count} Item entities");
-        }
-
-        public static void AddItemBarcodes(MongoClient client)
-        {
-            var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var itemCollection = db.GetCollection<BsonDocument>("ItemBarcode");
-
-            string itemBarcodesJson = File.ReadAllText(Paths.Itembarcode);
-
-            var itemBarcodeModels = JsonConvert.DeserializeObject<List<ItemBarcode>>(itemBarcodesJson).ToList();
-
-            var itemDocuments = new List<BsonDocument>();
-
-            foreach (var item in itemBarcodeModels)
+            if (batchMode)
             {
-                var doc = item.ToDocument();
-                itemDocuments.Add(doc);
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
+
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
-
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            itemCollection.InsertMany(itemDocuments);
-            s.Stop();
-
-            Console.WriteLine($"Inserted {itemDocuments.Count} ItemBarcode entities");
-        }
-
-        public static void AddLocations(MongoClient client)
-        {
-            var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var locationCollection = db.GetCollection<BsonDocument>("Location");
-
-            string locationsJson = File.ReadAllText(Paths.Location);
-
-            var locationModels = JsonConvert.DeserializeObject<List<Location>>(locationsJson).ToList();
-
-            var locationDocuments = new List<BsonDocument>();
-
-            foreach (var location in locationModels)
+            else 
             {
-                var doc = location.ToDocument();
-                locationDocuments.Add(doc);
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
             }
-
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            locationCollection.InsertMany(locationDocuments);
-            s.Stop();
-
-            Console.WriteLine($"Inserted {locationDocuments.Count} Location entities");
         }
 
-        public static void AddLocationItems(MongoClient client)
+        public static void AddItems(this MongoClient client, bool batchMode)
         {
-            //var db = client.GetDatabase(Configurations.DefaultDatabase);
-            //var locationItemCollection = db.GetCollection<BsonDocument>("LocationItem");
-
-            //string locationItemsJson = File.ReadAllText(Paths.LocationItem);
-
-            //var locationItemModels = JsonConvert.DeserializeObject<List<LocationItem>>(locationItemsJson).ToList();
-
-            //var locationDocuments = new List<BsonDocument>();
-
-            //foreach (var locationItem in locationItemModels)
-            //{
-            //    var doc = locationItem.ToDocument();
-            //    locationDocuments.Add(doc);
-            //}
-
-            //Stopwatch s = new Stopwatch();
-            //s.Start();
-            //locationItemCollection.InsertMany(locationDocuments);
-            //s.Stop();
-
-            //Console.WriteLine($"Inserted {locationDocuments.Count} LocationItem entities");
-        }
-
-        public static void AddLocationUsers(MongoClient client)
-        {
+            string objectName = "Item";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var locationUserCollection = db.GetCollection<BsonDocument>("LocationUser");
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
-            string locationUsersJson = File.ReadAllText(Paths.LocationUser);
+            string json = File.ReadAllText(Paths.Item);
 
-            var locationUserModels = JsonConvert.DeserializeObject<List<LocationUser>>(locationUsersJson).ToList();
+            var models = JsonConvert.DeserializeObject<List<Item>>(json).ToList();
 
-            var locationUserDocuments = new List<BsonDocument>();
+            var documents = new List<BsonDocument>();
 
-            foreach (var locationUser in locationUserModels)
+            foreach (var model in models)
             {
-                var doc = locationUser.ToDocument();
-                locationUserDocuments.Add(doc);
+                var doc = model.ToDocument();
+                documents.Add(doc);
             }
-
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            locationUserCollection.InsertMany(locationUserDocuments);
-            s.Stop();
-
-            Console.WriteLine($"Inserted {locationUserDocuments.Count} LocationUser entities");
-        }
-
-        public static void AddOrganisationSiteUsers(MongoClient client)
-        {
-            var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var organisationSiteUserCollection = db.GetCollection<BsonDocument>("OrganisationSiteUser");
-
-            string organisationSiteUserJson = File.ReadAllText(Paths.OrganisationSiteUser);
-
-            var organisationSiteUserModels = JsonConvert.DeserializeObject<List<OrganisationSiteUser>>(organisationSiteUserJson).ToList();
-
-            var organisationSiteUserDocuments = new List<BsonDocument>();
-
-            foreach (var organisationSiteUser in organisationSiteUserModels)
+            if (batchMode)
             {
-                var doc = organisationSiteUser.ToDocument();
-                organisationSiteUserDocuments.Add(doc);
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
+
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            organisationSiteUserCollection.InsertMany(organisationSiteUserDocuments);
-            s.Stop();
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
 
-            Console.WriteLine($"Inserted {organisationSiteUserDocuments.Count} OrganisationSiteUser entities");
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddPatients(MongoClient client)
+        public static void AddItemBarcodes(this MongoClient client, bool batchMode)
         {
-            string entity = "Patient";
-
+            string objectName = "ItemBarcode";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
+
+            string json = File.ReadAllText(Paths.Itembarcode);
+
+            var models = JsonConvert.DeserializeObject<List<ItemBarcode>>(json).ToList();
+
+            var documents = new List<BsonDocument>();
+
+            foreach (var model in models)
+            {
+                var doc = model.ToDocument();
+                documents.Add(doc);
+            }
+            if (batchMode) 
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
+
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else 
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
+        }
+
+        public static void AddLocations(this MongoClient client, bool batchMode)
+        {
+            string objectName = "Location";
+            var db = client.GetDatabase(Configurations.DefaultDatabase);
+            var collection = db.GetCollection<BsonDocument>(objectName);
+
+            string json = File.ReadAllText(Paths.Location);
+
+            var models = JsonConvert.DeserializeObject<List<Location>>(json).ToList();
+
+            var documents = new List<BsonDocument>();
+
+            foreach (var model in models)
+            {
+                var doc = model.ToDocument();
+                documents.Add(doc);
+            }
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
+
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
+        }
+
+        public static void AddLocationItems(this MongoClient client, bool batchMode)
+        {
+            string objectName = "LocationItem";
+            var db = client.GetDatabase(Configurations.DefaultDatabase);
+            var collection = db.GetCollection<BsonDocument>(objectName);
+
+            string json = File.ReadAllText(Paths.LocationItem);
+
+            var models = JsonConvert.DeserializeObject<List<LocationItem>>(json).ToList();
+
+            var documents = new List<BsonDocument>();
+
+            foreach (var model in models)
+            {
+                var doc = model.ToDocument();
+                documents.Add(doc);
+            }
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
+
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
+        }
+
+        public static void AddLocationUsers(this MongoClient client, bool batchMode)
+        {
+            string objectName = "LocationUser";
+            var db = client.GetDatabase(Configurations.DefaultDatabase);
+            var collection = db.GetCollection<BsonDocument>(objectName);
+
+            string json = File.ReadAllText(Paths.LocationUser);
+
+            var models = JsonConvert.DeserializeObject<List<LocationUser>>(json).ToList();
+
+            var documents = new List<BsonDocument>();
+
+            foreach (var model in models)
+            {
+                var doc = model.ToDocument();
+                documents.Add(doc);
+            }
+            if (batchMode) 
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
+
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
+        }
+
+        public static void AddOrganisationSiteUsers(this MongoClient client, bool batchMode)
+        {
+            string objectName = "OrganisationSiteUser";
+            var db = client.GetDatabase(Configurations.DefaultDatabase);
+            var collection = db.GetCollection<BsonDocument>(objectName);
+
+            string json = File.ReadAllText(Paths.OrganisationSiteUser);
+
+            var models = JsonConvert.DeserializeObject<List<OrganisationSiteUser>>(json).ToList();
+
+            var documents = new List<BsonDocument>();
+
+            foreach (var model in models)
+            {
+                var doc = model.ToDocument();
+                documents.Add(doc);
+            }
+            if (batchMode) 
+            { 
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
+
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
+        }
+
+        public static void AddPatients(this MongoClient client, bool batchMode)
+        {
+            string objectName = "Patient";
+            var db = client.GetDatabase(Configurations.DefaultDatabase);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.Patient);
 
@@ -227,26 +388,45 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
+            if (batchMode)
+            { 
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else 
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} ${entity} entities");
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddPreferenceCards(MongoClient client)
+        public static void AddPreferenceCards(this MongoClient client, bool batchMode)
         {
-            string entity = "PreferenceCard";
+            string objectName = "PreferenceCard";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.PreferenceCard);
 
@@ -254,26 +434,45 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddPreferenceCardItems(MongoClient client)
+        public static void AddPreferenceCardItems(this MongoClient client, bool batchMode)
         {
-            string entity = "PreferenceCardItem";
+            string objectName = "PreferenceCardItem";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.PreferenceCardItem);
 
@@ -281,26 +480,45 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddPreferenceCardProcedures(MongoClient client)
+        public static void AddPreferenceCardProcedures(this MongoClient client, bool batchMode)
         {
-            string entity = "PreferenceCardProcedure";
+            string objectName = "PreferenceCardProcedure";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.PreferenceCardProcedure);
 
@@ -308,26 +526,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddPreferenceCardProcedurePacks(MongoClient client)
+        public static void AddPreferenceCardProcedurePacks(this MongoClient client, bool batchMode)
         {
-            string entity = "PreferenceCardProcedurePack";
+            string objectName = "PreferenceCardProcedurePack";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.PreferenceCardProcedurePack);
 
@@ -335,26 +573,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddPreferenceCardSites(MongoClient client)
+        public static void AddPreferenceCardSites(this MongoClient client, bool batchMode)
         {
-            string entity = "PreferenceCardSite";
+            string objectName = "PreferenceCardSite";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.PreferenceCardSite);
 
@@ -362,26 +620,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddPreferenceCardSurgeons(MongoClient client)
+        public static void AddPreferenceCardSurgeons(this MongoClient client, bool batchMode)
         {
-            string entity = "PreferenceCardSurgeon";
+            string objectName = "PreferenceCardSurgeon";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.PreferenceCardSurgeon);
 
@@ -389,26 +667,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddProcedures(MongoClient client)
+        public static void AddProcedures(this MongoClient client, bool batchMode)
         {
-            string entity = "Procedure";
+            string objectName = "Procedure";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.Procedure);
 
@@ -416,26 +714,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddProcedureItems(MongoClient client)
+        public static void AddProcedureItems(this MongoClient client, bool batchMode)
         {
-            string entity = "ProcedureItem";
+            string objectName = "ProcedureItem";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.Procedure);
 
@@ -443,26 +761,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddProcedurePacks(MongoClient client)
+        public static void AddProcedurePacks(this MongoClient client, bool batchMode)
         {
-            string entity = "ProcedurePack";
+            string objectName = "ProcedurePack";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.ProcedurePack);
 
@@ -470,26 +808,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddProcedureSurgeons(MongoClient client)
+        public static void AddProcedureSurgeons(this MongoClient client, bool batchMode)
         {
-            string entity = "ProcedureSurgeon";
+            string objectName = "ProcedureSurgeon";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.ProcedureSurgeon);
 
@@ -497,26 +855,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddRolePermissions(MongoClient client)
+        public static void AddRolePermissions(this MongoClient client, bool batchMode)
         {
-            string entity = "RolePermission";
+            string objectName = "RolePermission";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.RolePermissions);
 
@@ -524,26 +902,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddSuppliers(MongoClient client)
+        public static void AddSuppliers(this MongoClient client, bool batchMode)
         {
-            string entity = "Supplier";
+            string objectName = "Supplier";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.Supplier);
 
@@ -551,26 +949,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddSupplierItems(MongoClient client)
+        public static void AddSupplierItems(this MongoClient client, bool batchMode)
         {
-            string entity = "SupplierItem";
+            string objectName = "SupplierItem";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.SupplierItem);
 
@@ -578,27 +996,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
 
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddSurgeons(MongoClient client)
+        public static void AddSurgeons(this MongoClient client, bool batchMode)
         {
-            string entity = "Surgeon";
+            string objectName = "Surgeon";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.Surgeon);
 
@@ -606,26 +1043,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddSurgeryItemStatusReasons(MongoClient client)
+        public static void AddSurgeryItemStatusReasons(this MongoClient client, bool batchMode)
         {
-            string entity = "SurgeryItemStatusReason";
+            string objectName = "SurgeryItemStatusReason";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.SurgeryItemStatusReason);
 
@@ -633,26 +1090,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddSurgerySchedules(MongoClient client)
+        public static void AddSurgerySchedules(this MongoClient client, bool batchMode)
         {
-            string entity = "SurgerySchedule";
+            string objectName = "SurgerySchedule";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.SurgerySchedule);
 
@@ -660,26 +1137,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddSurgeryScheduleSecondaryProcedures(MongoClient client)
+        public static void AddSurgeryScheduleSecondaryProcedures(this MongoClient client, bool batchMode)
         {
-            string entity = "SurgeryScheduleSecondaryProcedure";
+            string objectName = "SurgeryScheduleSecondaryProcedure";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.SurgeryScheduleSecondaryProcedure);
 
@@ -687,26 +1184,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddTheatres(MongoClient client)
+        public static void AddTheatres(this MongoClient client, bool batchMode)
         {
-            string entity = "Theatre";
+            string objectName = "Theatre";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.Theatre);
 
@@ -714,26 +1231,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddTheatreStaffs(MongoClient client)
+        public static void AddTheatreStaffs(this MongoClient client, bool batchMode)
         {
-            string entity = "TheatreStaff";
+            string objectName = "TheatreStaff";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.TheatreStaff);
 
@@ -741,26 +1278,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddSurgeries(MongoClient client)
+        public static void AddSurgeries(this MongoClient client, bool batchMode)
         {
-            string entity = "Surgery";
+            string objectName = "Surgery";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.Surgery);
 
@@ -768,26 +1325,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddSurgeryItems(MongoClient client)
+        public static void AddSurgeryItems(this MongoClient client, bool batchMode)
         {
-            string entity = "SurgeryItem";
+            string objectName = "SurgeryItem";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.SurgeryItems);
 
@@ -795,26 +1372,46 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
 
-        public static void AddProcedureProcedurePack(MongoClient client)
+        public static void AddProcedureProcedurePack(this MongoClient client, bool batchMode)
         {
-            string entity = "ProcedureProcedurePack";
+            string objectName = "ProcedureProcedurePack";
 
             var db = client.GetDatabase(Configurations.DefaultDatabase);
-            var collection = db.GetCollection<BsonDocument>(entity);
+            var collection = db.GetCollection<BsonDocument>(objectName);
 
             string json = File.ReadAllText(Paths.ProcedureProcedurePack);
 
@@ -822,18 +1419,38 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-            foreach (var item in models)
+            foreach (var model in models)
             {
-                var doc = item.ToDocument();
+                var doc = model.ToDocument();
                 documents.Add(doc);
             }
 
-            Stopwatch s = new Stopwatch();
-            s.Start();
-            collection.InsertMany(documents);
-            s.Stop();
+            if (batchMode)
+            {
+                Stopwatch s = new Stopwatch();
+                s.Start();
+                collection.InsertMany(documents);
+                s.Stop();
 
-            Console.WriteLine($"Inserted {documents.Count} {entity} entities");
+                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+            }
+            else
+            {
+                long allTime = 0;
+                int ct = 0;
+                foreach (var item in documents)
+                {
+                    Stopwatch s = new Stopwatch();
+                    s.Start();
+                    collection.InsertOne(item);
+                    s.Stop();
+
+                    ct++;
+                    allTime += s.ElapsedMilliseconds;
+                }
+
+                Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+            }
         }
     }
 }

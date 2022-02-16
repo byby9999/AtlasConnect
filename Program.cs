@@ -41,8 +41,8 @@ namespace AtlasConnect
             GenesisInserts.AddSurgeryItems(client);
             */
 
-            //GenesisUpdates.UpdateSurgeries(client, false);
-
+            //client.UpdateSurgeries(false);
+           
         }
     }
 }
