@@ -19,9 +19,8 @@ namespace AtlasConnect
         /// <param name="batchMode">
         /// If set to true, operations will be done in batch mode, i.e. with UpdateMany().
         /// If set to false, operations will be done 1 by 1, i.e. with repeated UpdateOne() calls.</param>
-        /// <param name="percentDataToAffect">How much of the total data in collection to affect
-        /// Applied only when called with batchMode=false (1 by 1 update)!
-        /// When batchMode=true, percentDataToAffect will be considered 100%</param>
+        /// <param name="percentDataToAffect">How much of the total data in collection to affect - Relevant only on 1-by-1 calls (batchMode=false)
+        /// When batchMode=true, we affect 100% of data in collection</param>
         public static void UpdateSurgeries(this MongoClient client, bool batchMode, int percentDataToAffect = 10)
         {
             string objectName = "Surgery";
@@ -73,7 +72,7 @@ namespace AtlasConnect
                     }   
                 }
 
-                Console.WriteLine($"Updated {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+                Console.WriteLine($"Updated {ct} {objectName} entities ({percentDataToAffect}%) in {allTime} ms (avg { allTime / ct } ms / entity)");
             }
         }
         public static void UpdateSurgeryItems(this MongoClient client, bool batchMode, int percentDataToAffect = 10)
@@ -127,7 +126,7 @@ namespace AtlasConnect
                     }
                 }
 
-                Console.WriteLine($"Updated {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+                Console.WriteLine($"Updated {ct} {objectName} entities ({percentDataToAffect}%) in {allTime} ms (avg { allTime / ct } ms / entity)");
             }
         }
 
@@ -182,7 +181,7 @@ namespace AtlasConnect
                     }
                 }
 
-                Console.WriteLine($"Updated {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+                Console.WriteLine($"Updated {ct} {objectName} entities ({percentDataToAffect}%) in {allTime} ms (avg { allTime / ct } ms / entity)");
             }
         }
 
@@ -237,7 +236,7 @@ namespace AtlasConnect
                     }
                 }
 
-                Console.WriteLine($"Updated {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+                Console.WriteLine($"Updated {ct} {objectName} entities ({percentDataToAffect}%) in {allTime} ms (avg { allTime / ct } ms / entity)");
             }
         }
 
@@ -292,7 +291,7 @@ namespace AtlasConnect
                     }
                 }
 
-                Console.WriteLine($"Updated {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+                Console.WriteLine($"Updated {ct} {objectName} entities ({percentDataToAffect}%) in {allTime} ms (avg { allTime / ct } ms / entity)");
             }
         }
 
@@ -347,7 +346,7 @@ namespace AtlasConnect
                     }
                 }
 
-                Console.WriteLine($"Updated {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+                Console.WriteLine($"Updated {ct} {objectName} entities ({percentDataToAffect}%) in {allTime} ms (avg { allTime / ct } ms / entity)");
             }
         }
         public static void UpdateItemBarcodes(this MongoClient client, bool batchMode, int percentDataToAffect = 10)
@@ -401,7 +400,7 @@ namespace AtlasConnect
                     }
                 }
 
-                Console.WriteLine($"Updated {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+                Console.WriteLine($"Updated {ct} {objectName} entities ({percentDataToAffect}%) in {allTime} ms (avg { allTime / ct } ms / entity)");
             }
         }
         public static void UpdateItems(this MongoClient client, bool batchMode, int percentDataToAffect = 10)
@@ -455,7 +454,7 @@ namespace AtlasConnect
                     }
                 }
 
-                Console.WriteLine($"Updated {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
+                Console.WriteLine($"Updated {ct} {objectName} entities ({percentDataToAffect}%) in {allTime} ms (avg { allTime / ct } ms / entity)");
             }
         }
     }
