@@ -14,7 +14,15 @@ namespace AtlasConnect
 {
     public static class GenesisInserts
     {
-        public static void AddBodySide(this MongoClient client, bool batchMode)
+        /// <summary>
+        /// Insert big sets of entities
+        /// </summary>
+        /// <param name="client">The MongoClient</param>
+        /// <param name="batchMode">if set to true, inserts will be executed all in a batch, i.e. with InsertMany()
+        /// if set to false, inserts will be executed 1 by 1, as multiple InsertOne() calls</param>
+        /// <param name="limit">If you want to insert a specific number of objects, set this parameter. 
+        /// Value has to be less than the nr. of objects in JSON file.</param>
+        public static void AddBodySide(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "BodySide";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -26,11 +34,15 @@ namespace AtlasConnect
 
             var documents = new List<BsonDocument>();
 
-                foreach (var model in models)
-                {
-                    var doc = model.ToDocument();
-                    documents.Add(doc);
-                }
+            foreach (var model in models)
+            {
+                var doc = model.ToDocument();
+                documents.Add(doc);
+            }
+            if (limit.HasValue && limit.Value <= documents.Count) 
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
 
             if (batchMode)
             {
@@ -61,7 +73,7 @@ namespace AtlasConnect
             
         }
 
-        public static void AddBodySites(this MongoClient client, bool batchMode)
+        public static void AddBodySites(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "BodySite";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -78,6 +90,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -106,7 +122,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddItems(this MongoClient client, bool batchMode)
+        public static void AddItems(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "Item";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -123,6 +139,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -151,7 +171,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddItemBarcodes(this MongoClient client, bool batchMode)
+        public static void AddItemBarcodes(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "ItemBarcode";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -167,6 +187,10 @@ namespace AtlasConnect
             {
                 var doc = model.ToDocument();
                 documents.Add(doc);
+            }
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
             }
             if (batchMode) 
             {
@@ -196,7 +220,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddLocations(this MongoClient client, bool batchMode)
+        public static void AddLocations(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "Location";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -213,6 +237,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -241,7 +269,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddLocationItems(this MongoClient client, bool batchMode)
+        public static void AddLocationItems(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "LocationItem";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -258,6 +286,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -286,7 +318,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddLocationUsers(this MongoClient client, bool batchMode)
+        public static void AddLocationUsers(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "LocationUser";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -302,6 +334,10 @@ namespace AtlasConnect
             {
                 var doc = model.ToDocument();
                 documents.Add(doc);
+            }
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
             }
             if (batchMode) 
             {
@@ -331,7 +367,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddOrganisationSiteUsers(this MongoClient client, bool batchMode)
+        public static void AddOrganisationSiteUsers(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "OrganisationSiteUser";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -347,6 +383,10 @@ namespace AtlasConnect
             {
                 var doc = model.ToDocument();
                 documents.Add(doc);
+            }
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
             }
             if (batchMode) 
             { 
@@ -376,7 +416,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddPatients(this MongoClient client, bool batchMode)
+        public static void AddPatients(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "Patient";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -392,6 +432,10 @@ namespace AtlasConnect
             {
                 var doc = model.ToDocument();
                 documents.Add(doc);
+            }
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
             }
             if (batchMode)
             { 
@@ -421,7 +465,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddPreferenceCards(this MongoClient client, bool batchMode)
+        public static void AddPreferenceCards(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "PreferenceCard";
 
@@ -439,6 +483,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -467,7 +515,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddPreferenceCardItems(this MongoClient client, bool batchMode)
+        public static void AddPreferenceCardItems(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "PreferenceCardItem";
 
@@ -485,6 +533,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -513,7 +565,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddPreferenceCardProcedures(this MongoClient client, bool batchMode)
+        public static void AddPreferenceCardProcedures(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "PreferenceCardProcedure";
 
@@ -531,7 +583,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -560,7 +615,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddPreferenceCardProcedurePacks(this MongoClient client, bool batchMode)
+        public static void AddPreferenceCardProcedurePacks(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "PreferenceCardProcedurePack";
 
@@ -578,7 +633,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -607,7 +665,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddPreferenceCardSites(this MongoClient client, bool batchMode)
+        public static void AddPreferenceCardSites(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "PreferenceCardSite";
 
@@ -625,7 +683,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -654,7 +715,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddPreferenceCardSurgeons(this MongoClient client, bool batchMode)
+        public static void AddPreferenceCardSurgeons(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "PreferenceCardSurgeon";
 
@@ -672,7 +733,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -701,7 +765,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddProcedures(this MongoClient client, bool batchMode)
+        public static void AddProcedures(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "Procedure";
 
@@ -719,7 +783,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -748,7 +815,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddProcedureItems(this MongoClient client, bool batchMode)
+        public static void AddProcedureItems(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "ProcedureItem";
 
@@ -766,7 +833,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -795,7 +865,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddProcedurePacks(this MongoClient client, bool batchMode)
+        public static void AddProcedurePacks(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "ProcedurePack";
 
@@ -813,7 +883,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -842,7 +915,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddProcedureSurgeons(this MongoClient client, bool batchMode)
+        public static void AddProcedureSurgeons(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "ProcedureSurgeon";
 
@@ -860,7 +933,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -889,7 +965,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddRolePermissions(this MongoClient client, bool batchMode)
+        public static void AddRolePermissions(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "RolePermission";
 
@@ -907,7 +983,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -936,7 +1015,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSuppliers(this MongoClient client, bool batchMode)
+        public static void AddSuppliers(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "Supplier";
 
@@ -954,7 +1033,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -983,7 +1065,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSupplierItems(this MongoClient client, bool batchMode)
+        public static void AddSupplierItems(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "SupplierItem";
 
@@ -1001,7 +1083,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -1030,7 +1115,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSurgeons(this MongoClient client, bool batchMode)
+        public static void AddSurgeons(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "Surgeon";
 
@@ -1048,7 +1133,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -1077,7 +1165,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSurgeryItemStatusReasons(this MongoClient client, bool batchMode)
+        public static void AddSurgeryItemStatusReasons(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "SurgeryItemStatusReason";
 
@@ -1095,7 +1183,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -1124,7 +1215,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSurgerySchedules(this MongoClient client, bool batchMode)
+        public static void AddSurgerySchedules(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "SurgerySchedule";
 
@@ -1142,7 +1233,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -1171,7 +1265,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSurgeryScheduleSecondaryProcedures(this MongoClient client, bool batchMode)
+        public static void AddSurgeryScheduleSecondaryProcedures(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "SurgeryScheduleSecondaryProcedure";
 
@@ -1189,7 +1283,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -1218,7 +1315,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddTheatres(this MongoClient client, bool batchMode)
+        public static void AddTheatres(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "Theatre";
 
@@ -1236,7 +1333,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -1265,7 +1365,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddTheatreStaffs(this MongoClient client, bool batchMode)
+        public static void AddTheatreStaffs(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "TheatreStaff";
 
@@ -1283,7 +1383,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -1312,7 +1415,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSurgeries(this MongoClient client, bool batchMode)
+        public static void AddSurgeries(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "Surgery";
 
@@ -1330,7 +1433,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -1359,7 +1465,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSurgeryItems(this MongoClient client, bool batchMode)
+        public static void AddSurgeryItems(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "SurgeryItem";
 
@@ -1377,7 +1483,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
@@ -1406,7 +1515,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddProcedureProcedurePack(this MongoClient client, bool batchMode)
+        public static void AddProcedureProcedurePack(this MongoClient client, bool batchMode, int? limit)
         {
             string objectName = "ProcedureProcedurePack";
 
@@ -1424,7 +1533,10 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-
+            if (limit.HasValue && limit.Value <= documents.Count)
+            {
+                documents = documents.Take(limit.Value).ToList();
+            }
             if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
