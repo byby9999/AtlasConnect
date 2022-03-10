@@ -8,11 +8,17 @@ namespace AtlasConnect
 {
     public class Configurations
     {
-        public const string MongoCluster_Chester_GenesisTest_AWS = ""; //do not commit value
+        public const string Chester_ChesterOrg_Project0_MyCluster = ""; //do not commit value
+
+        public const string AlexandraAccount_AlexandraOrg_Project0_MyApp1 = ""; //do not commit value
+
+        public const string Chester_ChesterOrg_AWS_Cluster0 = ""; //do not commit value
 
         public const string DefaultPartition = "61c058e5559668e69ad62a8d";
 
         public const string DefaultDatabase = "mydb";
+
+        public const string GenesisDb = "Genesis-Tenant-Dev";
 
         public static string[] OtherPartitions = new string[] 
         {
@@ -25,9 +31,17 @@ namespace AtlasConnect
 
     public class Paths
     {
-        public const string SurgeriesWithTenantFilePath = @"C:\Users\alexandra.savescu\Downloads\surgeries5000\surgeries5000.json";
-        public const string SurgeriesWithTenantFilePath34 = @"C:\Users\alexandra.savescu\Downloads\surgeries5000\surgeries5000_34.json";
-        
+        public const string SurgeriesWithTenantFilePath = @"";
+        public const string SurgeriesWithTenantFilePath34 = @"";
+
+        public const string PathLatestVersion = @"";
+
+        public static string PathSurgery = $"{PathLatestVersion}Surgery.json";
+        public static string PathProcedure = $"{PathLatestVersion}Procedure.json";
+        public static string PathSurgeon = $"{PathLatestVersion}Surgeon.json";
+        public static string PathTheatre = $"{PathLatestVersion}Theatre.json";
+
+
         public const string RootPath = @"C:\export2\";
         public const string OldRootPath = @"C:\export\";
 
@@ -70,6 +84,16 @@ namespace AtlasConnect
 
         public static string Surgery = $"{RootPath}vSurgery.json";
         public static string SurgeryItems = $"{RootPath}vSurgeryItems.json";
+
+    }
+    public class SecondaryPaths
+    {
+        public const string RootPath = @"";
+        
+        public static string Surgery = $"{RootPath}Surgery.json";
+        public static string Theatre = $"{RootPath}Theatre.json";
+        public static string Procedure = $"{RootPath}Procedure.json";
+        public static string Surgeon = $"{RootPath}Surgeon.json";
 
     }
 }
