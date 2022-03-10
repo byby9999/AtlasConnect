@@ -29,16 +29,16 @@ namespace AtlasConnect
             
             //specify here fields to update: (chain .Set calls)
             var updates1By1 = Builders<SurgeryDocument>.Update
-                .Set("_partition", Configurations.DefaultPartition);
+                .Set("_partition", "621ca20d5c1af503ba9f2577");
 
             var updatesBatch = Builders<BsonDocument>.Update
-                .Set("_partition", Configurations.DefaultPartition);
+                .Set("_partition", "621ca20d5c1af503ba9f2577");
 
             if (batchMode)
             {
                 var collection = db.GetCollection<BsonDocument>(objectName);
 
-                var filter = Builders<BsonDocument>.Filter.Empty;
+                var filter = Builders<BsonDocument>.Filter.Eq("_partition", "61c058e5559668e69ad62a8d");
 
                 s.Start();
                 var result = collection.UpdateMany(filter, updatesBatch);
