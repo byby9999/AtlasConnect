@@ -1,4 +1,5 @@
 ﻿using AtlasConnect.JsonModels;
+using AtlasConnect.JsonModels_Later;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
@@ -22,7 +23,7 @@ namespace AtlasConnect
         /// if set to false, inserts will be executed 1 by 1, as multiple InsertOne() calls</param>
         /// <param name="limit">If you want to insert a specific number of objects, set this parameter. 
         /// Value has to be less than the nr. of objects in JSON file.</param>
-        public static void AddBodySide(this MongoClient client, bool batchMode, int? limit)
+        public static void AddBodySide(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "BodySide";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -39,7 +40,7 @@ namespace AtlasConnect
                 var doc = model.ToDocument();
                 documents.Add(doc);
             }
-            if (limit.HasValue && limit.Value <= documents.Count) 
+            if (limit.HasValue && limit.Value <= documents.Count)
             {
                 documents = documents.Take(limit.Value).ToList();
             }
@@ -53,11 +54,11 @@ namespace AtlasConnect
 
                 Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
-            else 
+            else
             {
                 long allTime = 0;
                 int ct = 0;
-                foreach (var item in documents) 
+                foreach (var item in documents)
                 {
                     Stopwatch s = new Stopwatch();
                     s.Start();
@@ -70,10 +71,10 @@ namespace AtlasConnect
 
                 Console.WriteLine($"Inserted {ct} {objectName} entities in {allTime} ms (avg { allTime / ct } ms / entity)");
             }
-            
+
         }
 
-        public static void AddBodySites(this MongoClient client, bool batchMode, int? limit)
+        public static void AddBodySites(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "BodySite";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -103,7 +104,7 @@ namespace AtlasConnect
 
                 Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
-            else 
+            else
             {
                 long allTime = 0;
                 int ct = 0;
@@ -122,7 +123,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddItems(this MongoClient client, bool batchMode, int? limit)
+        public static void AddItems(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "Item";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -171,7 +172,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddItemBarcodes(this MongoClient client, bool batchMode, int? limit)
+        public static void AddItemBarcodes(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "ItemBarcode";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -192,7 +193,7 @@ namespace AtlasConnect
             {
                 documents = documents.Take(limit.Value).ToList();
             }
-            if (batchMode) 
+            if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
                 s.Start();
@@ -201,7 +202,7 @@ namespace AtlasConnect
 
                 Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
-            else 
+            else
             {
                 long allTime = 0;
                 int ct = 0;
@@ -220,7 +221,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddLocations(this MongoClient client, bool batchMode, int? limit)
+        public static void AddLocations(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "Location";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -269,7 +270,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddLocationItems(this MongoClient client, bool batchMode, int? limit)
+        public static void AddLocationItems(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "LocationItem";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -318,7 +319,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddLocationUsers(this MongoClient client, bool batchMode, int? limit)
+        public static void AddLocationUsers(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "LocationUser";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -339,7 +340,7 @@ namespace AtlasConnect
             {
                 documents = documents.Take(limit.Value).ToList();
             }
-            if (batchMode) 
+            if (batchMode)
             {
                 Stopwatch s = new Stopwatch();
                 s.Start();
@@ -367,7 +368,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddOrganisationSiteUsers(this MongoClient client, bool batchMode, int? limit)
+        public static void AddOrganisationSiteUsers(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "OrganisationSiteUser";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -388,8 +389,8 @@ namespace AtlasConnect
             {
                 documents = documents.Take(limit.Value).ToList();
             }
-            if (batchMode) 
-            { 
+            if (batchMode)
+            {
                 Stopwatch s = new Stopwatch();
                 s.Start();
                 collection.InsertMany(documents);
@@ -416,7 +417,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddPatients(this MongoClient client, bool batchMode, int? limit)
+        public static void AddPatients(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "Patient";
             var db = client.GetDatabase(Configurations.DefaultDatabase);
@@ -438,15 +439,15 @@ namespace AtlasConnect
                 documents = documents.Take(limit.Value).ToList();
             }
             if (batchMode)
-            { 
+            {
                 Stopwatch s = new Stopwatch();
                 s.Start();
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
-            else 
+            else
             {
                 long allTime = 0;
                 int ct = 0;
@@ -465,7 +466,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddPreferenceCards(this MongoClient client, bool batchMode, int? limit)
+        public static void AddPreferenceCards(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "PreferenceCard";
 
@@ -494,7 +495,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -515,7 +516,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddPreferenceCardItems(this MongoClient client, bool batchMode, int? limit)
+        public static void AddPreferenceCardItems(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "PreferenceCardItem";
 
@@ -544,7 +545,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -565,7 +566,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddPreferenceCardProcedures(this MongoClient client, bool batchMode, int? limit)
+        public static void AddPreferenceCardProcedures(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "PreferenceCardProcedure";
 
@@ -594,7 +595,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -615,7 +616,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddPreferenceCardProcedurePacks(this MongoClient client, bool batchMode, int? limit)
+        public static void AddPreferenceCardProcedurePacks(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "PreferenceCardProcedurePack";
 
@@ -644,7 +645,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -665,7 +666,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddPreferenceCardSites(this MongoClient client, bool batchMode, int? limit)
+        public static void AddPreferenceCardSites(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "PreferenceCardSite";
 
@@ -694,7 +695,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -715,7 +716,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddPreferenceCardSurgeons(this MongoClient client, bool batchMode, int? limit)
+        public static void AddPreferenceCardSurgeons(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "PreferenceCardSurgeon";
 
@@ -744,7 +745,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -765,22 +766,23 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddProcedures(this MongoClient client, bool batchMode, int? limit)
+        public static void AddProcedures(this MongoClient client, string databaseName, bool batchMode, int? limit = null)
         {
             string objectName = "Procedure";
 
-            var db = client.GetDatabase(Configurations.DefaultDatabase);
+            var db = client.GetDatabase(databaseName);
             var collection = db.GetCollection<BsonDocument>(objectName);
 
-            string json = File.ReadAllText(Paths.Procedure);
+            string json = File.ReadAllText(Paths.PathProcedure);
 
-            var models = JsonConvert.DeserializeObject<List<Procedure>>(json).ToList();
+            var models = JsonConvert.DeserializeObject<List<ProcedureEntity>>(json).ToList();
 
             var documents = new List<BsonDocument>();
 
             foreach (var model in models)
             {
-                var doc = model.ToDocument();
+                model._id = ObjectId.GenerateNewId();
+                var doc = model.ToBsonDocument();
                 documents.Add(doc);
             }
             if (limit.HasValue && limit.Value <= documents.Count)
@@ -794,7 +796,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -815,7 +817,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddProcedureItems(this MongoClient client, bool batchMode, int? limit)
+        public static void AddProcedureItems(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "ProcedureItem";
 
@@ -844,7 +846,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -865,7 +867,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddProcedurePacks(this MongoClient client, bool batchMode, int? limit)
+        public static void AddProcedurePacks(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "ProcedurePack";
 
@@ -894,7 +896,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -915,7 +917,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddProcedureSurgeons(this MongoClient client, bool batchMode, int? limit)
+        public static void AddProcedureSurgeons(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "ProcedureSurgeon";
 
@@ -944,7 +946,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -965,7 +967,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddRolePermissions(this MongoClient client, bool batchMode, int? limit)
+        public static void AddRolePermissions(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "RolePermission";
 
@@ -994,7 +996,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -1015,7 +1017,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSuppliers(this MongoClient client, bool batchMode, int? limit)
+        public static void AddSuppliers(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "Supplier";
 
@@ -1044,7 +1046,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -1065,7 +1067,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSupplierItems(this MongoClient client, bool batchMode, int? limit)
+        public static void AddSupplierItems(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "SupplierItem";
 
@@ -1094,7 +1096,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -1115,22 +1117,23 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSurgeons(this MongoClient client, bool batchMode, int? limit)
+        public static void AddSurgeons(this MongoClient client, string databaseName, bool batchMode, int? limit = null)
         {
             string objectName = "Surgeon";
 
-            var db = client.GetDatabase(Configurations.DefaultDatabase);
+            var db = client.GetDatabase(databaseName);
             var collection = db.GetCollection<BsonDocument>(objectName);
 
-            string json = File.ReadAllText(Paths.Surgeon);
+            string json = File.ReadAllText(Paths.PathSurgeon);
 
-            var models = JsonConvert.DeserializeObject<List<Surgeon>>(json).ToList();
+            var models = JsonConvert.DeserializeObject<List<SurgeonEntity>>(json).ToList();
 
             var documents = new List<BsonDocument>();
 
             foreach (var model in models)
             {
-                var doc = model.ToDocument();
+                model._id = ObjectId.GenerateNewId();
+                var doc = model.ToBsonDocument();
                 documents.Add(doc);
             }
             if (limit.HasValue && limit.Value <= documents.Count)
@@ -1144,7 +1147,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -1165,7 +1168,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSurgeryItemStatusReasons(this MongoClient client, bool batchMode, int? limit)
+        public static void AddSurgeryItemStatusReasons(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "SurgeryItemStatusReason";
 
@@ -1194,7 +1197,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -1215,7 +1218,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSurgerySchedules(this MongoClient client, bool batchMode, int? limit)
+        public static void AddSurgerySchedules(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "SurgerySchedule";
 
@@ -1244,7 +1247,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -1265,7 +1268,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSurgeryScheduleSecondaryProcedures(this MongoClient client, bool batchMode, int? limit)
+        public static void AddSurgeryScheduleSecondaryProcedures(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "SurgeryScheduleSecondaryProcedure";
 
@@ -1294,7 +1297,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -1315,22 +1318,23 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddTheatres(this MongoClient client, bool batchMode, int? limit)
+        public static void AddTheatres(this MongoClient client, string databaseName, bool batchMode, int? limit = null)
         {
             string objectName = "Theatre";
 
-            var db = client.GetDatabase(Configurations.DefaultDatabase);
+            var db = client.GetDatabase(databaseName);
             var collection = db.GetCollection<BsonDocument>(objectName);
 
-            string json = File.ReadAllText(Paths.Theatre);
+            string json = File.ReadAllText(Paths.PathTheatre);
 
-            var models = JsonConvert.DeserializeObject<List<Theatre>>(json).ToList();
+            var models = JsonConvert.DeserializeObject<List<TheatreEntity>>(json).ToList();
 
             var documents = new List<BsonDocument>();
 
             foreach (var model in models)
             {
-                var doc = model.ToDocument();
+                model._id = ObjectId.GenerateNewId();
+                var doc = model.ToBsonDocument();
                 documents.Add(doc);
             }
             if (limit.HasValue && limit.Value <= documents.Count)
@@ -1344,7 +1348,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -1365,7 +1369,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddTheatreStaffs(this MongoClient client, bool batchMode, int? limit)
+        public static void AddTheatreStaffs(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "TheatreStaff";
 
@@ -1394,7 +1398,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -1415,22 +1419,23 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSurgeries(this MongoClient client, bool batchMode, int? limit)
+        public static void AddSurgeries(this MongoClient client, string databaseName, bool batchMode, int? limit = null)
         {
             string objectName = "Surgery";
 
-            var db = client.GetDatabase(Configurations.DefaultDatabase);
+            var db = client.GetDatabase(databaseName);
             var collection = db.GetCollection<BsonDocument>(objectName);
 
-            string json = File.ReadAllText(Paths.Surgery);
+            string json = File.ReadAllText(Paths.PathSurgery);
 
-            var models = JsonConvert.DeserializeObject<List<Surgery>>(json).ToList();
+            var models = JsonConvert.DeserializeObject<List<SurgeryEntity>>(json).ToList();
 
             var documents = new List<BsonDocument>();
 
             foreach (var model in models)
             {
-                var doc = model.ToDocument();
+                model._id = ObjectId.GenerateNewId();
+                var doc = model.ToBsonDocument();
                 documents.Add(doc);
             }
             if (limit.HasValue && limit.Value <= documents.Count)
@@ -1444,7 +1449,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -1465,7 +1470,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddSurgeryItems(this MongoClient client, bool batchMode, int? limit)
+        public static void AddSurgeryItems(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "SurgeryItem";
 
@@ -1494,7 +1499,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
@@ -1515,7 +1520,7 @@ namespace AtlasConnect
             }
         }
 
-        public static void AddProcedureProcedurePack(this MongoClient client, bool batchMode, int? limit)
+        public static void AddProcedureProcedurePack(this MongoClient client, bool batchMode, int? limit = null)
         {
             string objectName = "ProcedureProcedurePack";
 
@@ -1544,7 +1549,7 @@ namespace AtlasConnect
                 collection.InsertMany(documents);
                 s.Stop();
 
-                Console.WriteLine($"Inserted {documents.Count} ${objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
+                Console.WriteLine($"Inserted {documents.Count} {objectName} entities in {s.ElapsedMilliseconds} ms (batch)");
             }
             else
             {
